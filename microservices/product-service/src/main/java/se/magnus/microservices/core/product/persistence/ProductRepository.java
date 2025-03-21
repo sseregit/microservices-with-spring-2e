@@ -1,7 +1,6 @@
 package se.magnus.microservices.core.product.persistence;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Optional;
 

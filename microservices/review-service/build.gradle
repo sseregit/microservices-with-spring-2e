@@ -44,6 +44,12 @@ dependencies {
 
 	implementation platform('org.testcontainers:testcontainers-bom:1.20.6') //import bom
 	testImplementation('org.testcontainers:mysql') //no version specified
+
+	implementation 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {

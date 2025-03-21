@@ -1,11 +1,9 @@
 package se.magnus.microservices.core.product;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
@@ -16,10 +14,10 @@ import se.magnus.microservices.core.product.persistence.ProductRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.IntStream.rangeClosed;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @DataMongoTest
@@ -34,7 +32,7 @@ class PersistenceTests extends MongoDbTestBase {
         repository.deleteAll();
         ProductEntity entity = new ProductEntity(1, "n", 1);
         savedEntity = repository.save(entity);
-        assertThat(entity).isEqualTo(savedEntity);
+        assertEqualsProduct(entity, savedEntity);
     }
 
     @Test

@@ -1,11 +1,24 @@
 server.port: 7003
 server.error.include-message: always
 
+
 logging:
   level:
     root: INFO
     se.magnus: DEBUG
-
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/test
 ---
 spring:
   config:
