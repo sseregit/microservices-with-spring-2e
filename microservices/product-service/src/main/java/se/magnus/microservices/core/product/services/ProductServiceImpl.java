@@ -1,7 +1,7 @@
 package se.magnus.microservices.core.product.services;
 
-import com.mongodb.DuplicateKeyException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.RestController;
 import se.magnus.api.core.product.Product;
 import se.magnus.api.core.product.ProductService;
