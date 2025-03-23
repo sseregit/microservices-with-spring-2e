@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import se.magnus.api.core.product.Product;
 
 @Tag(name = "ProductComposite", description = "REST API for composite product information.")
 public interface ProductCompositeService {
@@ -36,7 +35,7 @@ public interface ProductCompositeService {
         @ApiResponse(responseCode = "422", description = "${api.responseCodes.unprocessableEntity.description}")
     })
     @PostMapping(value = "/product-composite", consumes = "application/json")
-    Product createProduct(@RequestBody ProductAggregate product);
+    void createProduct(@RequestBody ProductAggregate body);
 
     @Operation(
         summary = "${api.product-composite.delete-composite-product.description}",
@@ -46,6 +45,6 @@ public interface ProductCompositeService {
         @ApiResponse(responseCode = "400", description = "${api.responseCodes.badRequest.description}"),
         @ApiResponse(responseCode = "422", description = "${api.responseCodes.unprocessableEntity.description}")
     })
-    @DeleteMapping(value = "/product-composite")
-    void deleteProduct(@RequestBody ProductAggregate product);
+    @DeleteMapping(value = "/product-composite/{productId}")
+    void deleteProduct(@PathVariable int productId);
 }
