@@ -46,7 +46,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
         this.restTemplate = restTemplate;
         this.mapper = mapper;
         this.productServiceUrl =
-            "http://" + productServiceHost + ":" + productServicePort + "/product/";
+            "http://" + productServiceHost + ":" + productServicePort + "/product";
         this.recommendationServiceUrl =
             "http://" + recommendationServiceHost + ":" + recommendationServicePort
                 + "/recommendation?productId=";
