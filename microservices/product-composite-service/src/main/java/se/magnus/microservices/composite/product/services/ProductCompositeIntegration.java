@@ -49,15 +49,15 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
             "http://" + productServiceHost + ":" + productServicePort + "/product";
         this.recommendationServiceUrl =
             "http://" + recommendationServiceHost + ":" + recommendationServicePort
-                + "/recommendation?productId=";
+                + "/recommendation";
         this.reviewServiceUrl =
-            "http://" + reviewServiceHost + ":" + reviewServicePort + "/review?productId=";
+            "http://" + reviewServiceHost + ":" + reviewServicePort + "/review";
     }
 
     @Override
     public Product getProduct(int productId) {
         try {
-            String url = productServiceUrl + productId;
+            String url = productServiceUrl + "/" + productId;
             log.debug("Will call getProduct API on URL: {}", url);
             Product product = restTemplate.getForObject(url, Product.class);
             log.debug("Found a product with id: {}", product.getProductId());
@@ -115,7 +115,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
     @Override
     public List<Recommendation> getRecommendations(int productId) {
         try {
-            String url = recommendationServiceUrl + productId;
+            String url = recommendationServiceUrl + "?productId=" + productId;
 
             log.debug("Will call getRecommendations API on URL: {}", url);
             List<Recommendation> recommendations = restTemplate.exchange(url, GET, null,
@@ -166,7 +166,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
     @Override
     public List<Review> getReviews(int productId) {
         try {
-            String url = reviewServiceUrl + productId;
+            String url = reviewServiceUrl + "?productId=" + productId;
 
             log.debug("Will call getReviews API on URL: {}", url);
             List<Review> reviews = restTemplate.exchange(url, GET, null,
