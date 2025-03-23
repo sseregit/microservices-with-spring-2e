@@ -2,6 +2,7 @@ package se.magnus.microservices.composite.product.services;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import se.magnus.api.composite.product.ProductAggregate;
 import se.magnus.api.composite.product.ProductCompositeService;
 import se.magnus.api.composite.product.RecommendationSummary;
@@ -17,11 +18,13 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
 
     private final ServiceUtil serviceUtil;
     private final ProductCompositeIntegration integration;
+    private final RestTemplate restTemplate;
 
     public ProductCompositeServiceImpl(ServiceUtil serviceUtil,
-        ProductCompositeIntegration integration) {
+        ProductCompositeIntegration integration, RestTemplate restTemplate) {
         this.serviceUtil = serviceUtil;
         this.integration = integration;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -36,8 +39,8 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
     }
 
     @Override
-    public void createProduct(ProductAggregate product) {
-
+    public Product createProduct(ProductAggregate product) {
+        return null;
     }
 
     @Override
@@ -51,15 +54,13 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
         String name = product.getName();
         int weight = product.getWeight();
 
-        List<RecommendationSummary> recommendationSummaries =
-            recommendations == null ? null : recommendations.stream()
-                .map(r -> new RecommendationSummary(r.getRecommendationId(), r.getAuthor(),
-                    r.getRate()))
+        List<RecommendationSummary> recommendationSummaries = recommendations == null ? null
+            : recommendations.stream().map(
+                    r -> new RecommendationSummary(r.getRecommendationId(), r.getAuthor(), r.getRate()))
                 .toList();
 
         List<ReviewSummary> reviewSummaries = reviews == null ? null : reviews.stream()
-            .map(r -> new ReviewSummary(r.getReviewId(), r.getAuthor(), r.getSubject()))
-            .toList();
+            .map(r -> new ReviewSummary(r.getReviewId(), r.getAuthor(), r.getSubject())).toList();
 
         String productAddress = product.getServiceAddress();
         String reviewAddress =
