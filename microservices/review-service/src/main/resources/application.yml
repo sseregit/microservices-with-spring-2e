@@ -16,14 +16,18 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
   datasource:
-    username: root
-    password: root
-    url: jdbc:mysql://localhost:3306/test
+    username: user
+    password: pwd
+    url: jdbc:mysql://localhost/review-db
+    hikari:
+      initialization-fail-timeout: 60000
 ---
 spring:
   config:
     activate:
       on-profile: docker
+  datasource:
+    url: jdbc:mysql://mysql/review-db
 
 server:
   port: 8080
