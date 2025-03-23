@@ -30,11 +30,11 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
     }
 
     @Override
-    public ProductAggregate getProduct(int producteId) {
+    public ProductAggregate getProduct(int productId) {
 
-        Product product = integration.getProduct(producteId);
-        List<Recommendation> recommendations = integration.getRecommendations(producteId);
-        List<Review> reviews = integration.getReviews(producteId);
+        Product product = integration.getProduct(productId);
+        List<Recommendation> recommendations = integration.getRecommendations(productId);
+        List<Review> reviews = integration.getReviews(productId);
 
         return createProductAggregate(product, recommendations, reviews,
             serviceUtil.getServiceAddress());

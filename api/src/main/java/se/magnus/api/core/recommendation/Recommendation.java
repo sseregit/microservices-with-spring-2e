@@ -1,10 +1,5 @@
 package se.magnus.api.core.recommendation;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class Recommendation {
 
     private int productId;
@@ -33,4 +28,27 @@ public class Recommendation {
         this.serviceAddress = serviceAddress;
     }
 
+    public int getProductId() {
+        return productId;
+    }
+
+    public int getRecommendationId() {
+        return recommendationId;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public int getRate() {
+        return rate;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getServiceAddress() {
+        return serviceAddress;
+    }
 }
