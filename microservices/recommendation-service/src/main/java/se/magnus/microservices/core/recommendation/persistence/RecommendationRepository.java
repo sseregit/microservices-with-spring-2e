@@ -1,9 +1,10 @@
 package se.magnus.microservices.core.recommendation.persistence;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Flux;
 
-import java.util.List;
+public interface RecommendationRepository extends
+    ReactiveMongoRepository<RecommendationEntity, String> {
 
-public interface RecommendationRepository extends MongoRepository<RecommendationEntity, String> {
-    List<RecommendationEntity> findByProductId(int productId);
+    Flux<RecommendationEntity> findByProductId(int productId);
 }

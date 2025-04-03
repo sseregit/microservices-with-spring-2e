@@ -9,11 +9,8 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-    healthcheck:
-      test: "curl --fail http://localhost:8080/actuator/health || exit 1"
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      rabbitmq:
+        condition: service_healthy
 
   recommendation:
     build: microservices/recommendation-service
@@ -23,11 +20,8 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-    healthcheck:
-      test: "curl --fail http://localhost:8080/actuator/health || exit 1"
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      rabbitmq:
+        condition: service_healthy
 
   review:
     build: microservices/review-service
@@ -37,11 +31,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    healthcheck:
-      test: "curl --fail http://localhost:8080/actuator/health || exit 1"
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      rabbitmq:
+        condition: service_healthy
 
   product_composite:
     build: microservices/product-composite-service
@@ -51,11 +42,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
-      product:
-        condition: service_healthy
-      recommendation:
-        condition: service_healthy
-      review:
+      rabbitmq:
         condition: service_healthy
 
   mongodb:
@@ -85,3 +72,17 @@ services:
       interval: 5s
       timeout: 2s
       retries: 60
+
+  rabbitmq:
+    image: rabbitmq:4.0.7-management
+    mem_limit: 512m
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
+
