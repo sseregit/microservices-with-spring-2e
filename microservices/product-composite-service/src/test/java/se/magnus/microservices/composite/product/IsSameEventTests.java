@@ -1,25 +1,25 @@
 package se.magnus.microservices.composite.product;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static se.magnus.api.event.Event.Type.CREATE;
-import static se.magnus.api.event.Event.Type.DELETE;
-import static se.magnus.microservices.composite.product.IsSameEvent.sameEventExceptCreatedAt;
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
+import static se.magnus.api.event.Event.Type.*;
+import static se.magnus.microservices.composite.product.IsSameEvent.*;
+
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import se.magnus.api.core.product.Product;
 import se.magnus.api.event.Event;
 
 class IsSameEventTests {
 
-    ObjectMapper mapper = new ObjectMapper();
-
     @Test
     void testEventObjectCompare() throws JsonProcessingException {
-
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
         // Event #1 and #2 are the same event, but occurs as different times
         // Event #3 and #4 are different events
         Event<Integer, Product> event1 = new Event<>(CREATE, 1, new Product(1, "name", 1, null));

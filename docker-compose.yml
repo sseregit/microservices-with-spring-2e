@@ -1,8 +1,10 @@
-version: '2.1'
-
 services:
   product:
-    build: microservices/product-service
+    build:
+      context: microservices/product-service
+      tags:
+        - product:dev
+    image: product:dev
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -13,7 +15,11 @@ services:
         condition: service_healthy
 
   recommendation:
-    build: microservices/recommendation-service
+    build:
+      context: microservices/recommendation-service
+      tags:
+        - recommendation:dev
+    image: recommendation:dev
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -24,7 +30,11 @@ services:
         condition: service_healthy
 
   review:
-    build: microservices/review-service
+    build:
+      context: microservices/review-service
+      tags:
+        - review:dev
+    image: review:dev
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -35,7 +45,11 @@ services:
         condition: service_healthy
 
   product_composite:
-    build: microservices/product-composite-service
+    build:
+      context: microservices/product-composite-service
+      tags:
+        - product-composite:dev
+    image: product-composite:dev
     mem_limit: 512m
     ports:
       - "8080:8080"

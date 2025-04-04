@@ -1,10 +1,11 @@
 package se.magnus.microservices.core.recommendation.services;
 
-import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.*;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.RestController;
+
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.magnus.api.core.recommendation.Recommendation;
@@ -60,7 +61,8 @@ public class RecommendationServiceImpl implements RecommendationService {
             .log(log.getName(), FINE)
             .onErrorMap(DuplicateKeyException.class,
                 ex -> new InvalidInputException(
-                    "Duplicate key, Product Id: " + body.getProductId()))
+                    "Duplicate key, Product Id: " + body.getProductId() + ", Recommendation Id:"
+                        + body.getRecommendationId()))
             .map(e -> mapper.entityToApi(e));
 
         return newEntity;

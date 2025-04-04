@@ -1,24 +1,26 @@
 package se.magnus.microservices.core.product.services;
 
 import java.util.function.Consumer;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import se.magnus.api.core.product.Product;
 import se.magnus.api.core.product.ProductService;
 import se.magnus.api.event.Event;
 import se.magnus.api.exceptions.EventProcessingException;
 
 @Slf4j
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 public class MessageProcessorConfig {
 
     private final ProductService productService;
 
     @Bean
-    Consumer<Event<Integer, Product>> messageProcessor() {
+    public Consumer<Event<Integer, Product>> messageProcessor() {
         return event -> {
             log.debug("Process message created at {}...", event.getEventCreatedAt());
 

@@ -1,16 +1,13 @@
 package se.magnus.microservices.core.recommendation;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static se.magnus.api.event.Event.Type.CREATE;
-import static se.magnus.api.event.Event.Type.DELETE;
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.*;
+import static se.magnus.api.event.Event.Type.*;
 
 import java.util.function.Consumer;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
 import se.magnus.api.core.recommendation.Recommendation;
 import se.magnus.api.event.Event;
 import se.magnus.api.exceptions.InvalidInputException;
@@ -38,7 +36,7 @@ class RecommendationServiceApplicationTests extends MongoDbTestBase {
 
     @BeforeEach
     void setupDb() {
-        repository.deleteAll();
+        repository.deleteAll().block();
     }
 
     @Test

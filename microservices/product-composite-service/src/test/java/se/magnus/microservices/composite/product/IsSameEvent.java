@@ -1,15 +1,19 @@
 package se.magnus.microservices.composite.product;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import lombok.extern.slf4j.Slf4j;
 import se.magnus.api.event.Event;
 
 @Slf4j
@@ -20,6 +24,7 @@ public class IsSameEvent extends TypeSafeMatcher<String> {
 
     private IsSameEvent(Event expectedEvent) {
         this.expectedEvent = expectedEvent;
+        mapper.registerModule(new JavaTimeModule());
     }
 
     public static Matcher<String> sameEventExceptCreatedAt(Event expectedEvent) {
@@ -46,7 +51,8 @@ public class IsSameEvent extends TypeSafeMatcher<String> {
 
     private Map getMapWithoutCreatedAt(Event event) {
         Map mapEvent = convertObjectToMap(event);
-        return null;
+        mapEvent.remove("eventCreatedAt");
+        return mapEvent;
     }
 
     private Map convertObjectToMap(Object object) {

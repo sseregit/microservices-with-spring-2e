@@ -1,15 +1,16 @@
 package se.magnus.microservices.core.recommendation;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.OptimisticLockingFailureException;
+
 import se.magnus.microservices.core.recommendation.persistence.RecommendationEntity;
 import se.magnus.microservices.core.recommendation.persistence.RecommendationRepository;
 
@@ -39,7 +40,7 @@ class PersistenceTests extends MongoDbTestBase {
         RecommendationEntity foundEntity = repository.findById(newEntity.getId()).block();
         assertEqualsRecommendation(newEntity, foundEntity);
 
-        assertThat(repository.count()).isEqualTo(2);
+		assertThat(repository.count().block()).isEqualTo(2);
     }
 
     @Test
@@ -54,7 +55,7 @@ class PersistenceTests extends MongoDbTestBase {
 
     @Test
     void delete() {
-        repository.delete(savedEntity);
+		repository.delete(savedEntity).block();
         assertThat(repository.existsById(savedEntity.getId()).block()).isFalse();
     }
 
@@ -81,7 +82,7 @@ class PersistenceTests extends MongoDbTestBase {
         RecommendationEntity entity2 = repository.findById(savedEntity.getId()).block();
 
         entity1.setAuthor("a1");
-        repository.save(entity1);
+		repository.save(entity1).block();
 
         assertThatThrownBy(() -> {
             entity2.setAuthor("a2");
