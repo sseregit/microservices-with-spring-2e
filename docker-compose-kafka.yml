@@ -1,0 +1,174 @@
+services:
+  product:
+    build:
+      context: microservices/product-service
+      tags:
+        - product:dev
+    image: product:dev
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+  product-p1:
+    build:
+      context: microservices/product-service
+      tags:
+        - product:dev
+    image: product:dev
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  recommendation:
+    build:
+      context: microservices/recommendation-service
+      tags:
+        - recommendation:dev
+    image: recommendation:dev
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  recommendation-p1:
+    build:
+      context: microservices/recommendation-service
+      tags:
+        - recommendation:dev
+    image: recommendation:dev
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  review:
+    build:
+      context: microservices/review-service
+      tags:
+        - review:dev
+    image: review:dev
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  review-p1:
+    build:
+      context: microservices/review-service
+      tags:
+        - review:dev
+    image: review:dev
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1,kafka
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  product_composite:
+    build:
+      context: microservices/product-composite-service
+      tags:
+        - product-composite:dev
+    image: product-composite:dev
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker, streaming_partitioned,kafka
+    depends_on:
+      kafka:
+        condition: service_started
+
+  mongodb:
+    image: mongo:5.0
+    mem_limit: 512m
+    ports:
+      - "27017:27017"
+    command: mongod
+    healthcheck:
+      test: "mongo --eval 'db.stats().ok'"
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
+  mysql:
+    image: mysql:8.0.41
+    mem_limit: 512m
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=review-db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pwd
+    healthcheck:
+      test: "/usr/bin/mysql --user=user --password=pwd --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.9.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 1 # zookeeper 클러스터에서 유일하게 zookeeper를 식별할 아이디 중복 불가능
+      ZOOKEEPER_TICK_TIME: 2000 # zookeeper가 클러스터를 구성할 때 동기화를 위한 기본 틱 타임 (millisecond)
+      ZOOKEEPER_CLIENT_PORT: 2181
+    #      ZOOKEEPER_INIT_LIMIT: 10 # TICK_TIME * INIT_LIMIT zookeeper 초기화를 위한 제한 시간 설정
+    #      ZOOKEEPER_SYNC_LIMIT: 5 # TICK_TIME * SYNC_LIMIT 주키퍼 리더와 나머지 서버들의 싱크 타임
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.9.0
+    container_name: kafka
+    user: root
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 0 # 브로커 식별자를 의미한다. 브로커 별로 모두 달라야 한다.
+      KAFKA_LOG_DIRS: /var/lib/kafka-logs # 로그 경로
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true # 토픽 자동 생성 옵션 관리가 어렵기 때문에 false추천
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 # kafka가 zookeeper에 커넥션하기 위한 대상 지정
+      # 보안을 위한 프로토콜 매핑 KAFKA_ADVERTISED_LISTENERS와 함께 key/value로 매핑된다.
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      # Kafka 브로커가 실제 리스닝(bind)할 주소 및 포트를 정의한다.
+      # 0.0.0.0은 모든 인터페이스에서 수신 대기한다.
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      # 외부에서 접속하기 위한 리스너 설정
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      # 도커 내부에서 사용할 리스너 이름을 지정한다
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      # 컨슈머 그룹 오프셋을 저장하는 __consumer_offsets 토픽의 복제 계수를 지정한다.
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      # 트랜잭션 최소 ISR(InSyncReplicas 설정)을 지정하는 것
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+
+

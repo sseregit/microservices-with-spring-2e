@@ -79,5 +79,5 @@ spring.config.activate.on-profile: kafka
 
 management.health.rabbit.enabled: false
 spring.cloud.stream.defaultBinder: kafka
-spring.kafka.bootstrap-servers: kafka:9092
+spring.kafka.bootstrap-servers: kafka:29092
 spring.cloud.stream.kafka.binder.replication-factor: 1
