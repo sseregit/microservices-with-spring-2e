@@ -72,7 +72,7 @@ app.eureka-server: localhost
 eureka:
   client:
     service-url:
-      defaultZone: http//${app.eureka-server}:8761/eureka/
+      defaultZone: http://${app.eureka-server}:8761/eureka/
     initial-instance-info-replication-interval-seconds: 5
     registry-fetch-interval-seconds: 5
   instance:
@@ -119,17 +119,6 @@ spring.config.activate.on-profile: docker
 server.port: 8080
 
 app.eureka-server: eureka
-
-app:
-  product-service:
-    host: product
-    port: 8080
-  recommendation-service:
-    host: recommendation
-    port: 8080
-  review-service:
-    host: review
-    port: 8080
 
 spring.rabbitmq.host: rabbitmq
 
