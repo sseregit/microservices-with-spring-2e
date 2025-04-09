@@ -170,5 +170,9 @@ services:
       # 트랜잭션 최소 ISR(InSyncReplicas 설정)을 지정하는 것
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
 
-
+  eureka:
+    build: spring-cloud/eureka-server
+    mem_limit: 512m
+    ports:
+      - "8761:8761"
 
