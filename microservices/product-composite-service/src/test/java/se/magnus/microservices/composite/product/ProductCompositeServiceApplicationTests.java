@@ -1,11 +1,12 @@
 package se.magnus.microservices.composite.product;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.MediaType.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.magnus.api.core.product.Product;
@@ -23,7 +23,8 @@ import se.magnus.api.exceptions.InvalidInputException;
 import se.magnus.api.exceptions.NotFoundException;
 import se.magnus.microservices.composite.product.services.ProductCompositeIntegration;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+    "eureka.client.enabled=false"})
 class ProductCompositeServiceApplicationTests {
 
     private static final int PRODUCT_ID_OK = 1;
