@@ -88,15 +88,13 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  product_composite:
+  product-composite:
     build:
       context: microservices/product-composite-service
       tags:
         - product-composite:dev
     image: product-composite:dev
     mem_limit: 512m
-    ports:
-      - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker, streaming_partitioned
     depends_on:
@@ -145,10 +143,20 @@ services:
 
   eureka:
     build:
-      context: spring-cloud
+      context: spring-cloud/eureka-server
       tags:
         - eureka-server:dev
     image: eureka-server:dev
     mem_limit: 512m
+
+  gateway:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    build:
+      context: spring-cloud/gateway
+      tags:
+        - gateway:dev
+    image: gateway:dev
+    mem_limit: 512m
     ports:
-      - "8761:8761"
+      - "8080:8080"
