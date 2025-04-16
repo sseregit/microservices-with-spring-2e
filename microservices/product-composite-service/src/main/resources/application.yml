@@ -68,12 +68,15 @@ server.error.include-message: always
 
 spring.application.name: product-composite
 
-app.eureka-server: localhost
+app:
+  eureka-username: u
+  eureka-password: p
+  eureka-server: localhost
 
 eureka:
   client:
-    service-url:
-      defaultZone: http://${app.eureka-server}:8761/eureka/
+    serviceUrl:
+      defaultZone: "http://${app.eureka-username}:${app.eureka-password}@${app.eureka-server}:8761/eureka/"
     initial-instance-info-replication-interval-seconds: 5
     registry-fetch-interval-seconds: 5
   instance:
