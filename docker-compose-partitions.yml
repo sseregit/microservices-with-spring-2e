@@ -100,6 +100,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      auth-server:
+        condition: service_healthy
 
   mongodb:
     image: mongo:5.0
@@ -160,3 +162,20 @@ services:
     mem_limit: 512m
     ports:
       - "8443:8443"
+    depends_on:
+      auth-server:
+        condition: service_healthy
+
+  auth-server:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    build:
+      context: spring-cloud/authorization-server
+      tags:
+        - auth-server:dev
+    mem_limit: 512m
+    healthcheck:
+      test: [ "CMD", "curl", "-fs", "http://localhost:9999/actuator/health" ]
+      interval: 5s
+      timeout: 2s
+      retries: 60
