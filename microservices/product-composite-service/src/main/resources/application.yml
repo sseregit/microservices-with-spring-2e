@@ -4,6 +4,17 @@ springdoc:
   packagesToScan: se.magnus.microservices.composite.product
   pathsToMatch: /**
 
+  swagger-ui:
+    oauth2-redirect-url: https://localhost:8443/webjars/swagger-ui/oauth2-redirect.html
+    oauth:
+      client-id: writer
+      client-secret: writer-secret
+      use-basic-authentication-with-access-code-grant: true
+  oAuthFlow:
+    authorizationUrl: https://localhost:8443/oauth2/authorize
+    tokenUrl: https://localhost:8443/oauth2/token
+
+
 
 api:
 
@@ -72,6 +83,7 @@ app:
   eureka-username: u
   eureka-password: p
   eureka-server: localhost
+  auth-server: localhost
 
 eureka:
   client:
@@ -119,12 +131,20 @@ management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
 server:
   forward-headers-strategy: framework
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://${app.auth-server}:9999
 ---
 spring.config.activate.on-profile: docker
 
 server.port: 8080
 
 app.eureka-server: eureka
+app.auth-server: auth-server
 
 spring.rabbitmq.host: rabbitmq
 

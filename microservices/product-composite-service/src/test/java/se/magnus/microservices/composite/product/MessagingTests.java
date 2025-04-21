@@ -33,7 +33,8 @@ import se.magnus.api.event.Event;
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
     properties = {"spring.main.allow-bean-definition-overriding=true",
-        "eureka.client.enabled=false"})
+        "eureka.client.enabled=false"},
+    classes = {TestSecurityConfig.class})
 @Import({TestChannelBinderConfiguration.class})
 @Slf4j
 public class MessagingTests {

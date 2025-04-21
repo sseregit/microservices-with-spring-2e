@@ -24,7 +24,8 @@ public class SecurityConfig {
                     authorizeExchangeSpec.pathMatchers("/login/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/error/**").permitAll();
                     authorizeExchangeSpec.pathMatchers("/openapi/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/webjars/**").permitAll();
+                    authorizeExchangeSpec.pathMatchers("/webjars/**").
+                        permitAll();
                     authorizeExchangeSpec.anyExchange().authenticated();
                 }
             )
