@@ -16,7 +16,7 @@ function assertCurl() {
   local curlCmd="$2 -w \"%{http_code}\""
   local result=$(eval $curlCmd)
   local httpCode="${result:(-3)}"
-  RESPONSE='' && (( ${#result} > 3)) && RESPONSE="${result%???}"
+  RESPONSE='' && (( ${#result} > 3 )) && RESPONSE="${result%???}"
 
   if [ "$httpCode" = "$expectedHttpCode" ]
   then
@@ -98,7 +98,7 @@ function testCompositeCreated() {
 }
 
 function waitForMessageProcessing() {
-  echo "Wait for message to be processed..."
+  echo "Wait for messages to be processed..."
 
   # Give background processing some time to complete...
   sleep 1
@@ -106,7 +106,7 @@ function waitForMessageProcessing() {
   n=0
   until testCompositeCreated
   do
-    n=$((n+1))
+    n=$(( n + 1 ))
     if [[ $n == 40 ]]
     then
       echo " Give up"
@@ -124,7 +124,7 @@ function recreateComposite() {
   local composite=$2
 
   assertCurl 202 "curl -X DELETE $AUTH -k https://$HOST:$PORT/product-composite/${productId} -s"
-  assertEqual 202 $(curl -X POST -s -k https://$HOST:$PORT/product-composite -H "Content-Type: application/json" --data "$composite" -w "%{http_code}")
+  assertEqual 202 $(curl -X POST -s -k https://$HOST:$PORT/product-composite -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" --data "$composite" -w "%{http_code}")
 }
 
 function setupTestdata() {
@@ -181,13 +181,13 @@ fi
 
 waitForService curl -k https://$HOST:$PORT/actuator/health
 
-ACCESS_TOKEN=$(curl -k https://writer:writer-secret@$HOST:$PORT/oauth2/token -d grant_type=client_credentials -s | jq .access_token -r)
+ACCESS_TOKEN=$(curl -k https://writer:writer-secret@$HOST:$PORT/oauth2/token -d grant_type=client_credentials -d scope="product:write product:read" -s| jq .access_token -r)
 echo ACCESS_TOKEN=$ACCESS_TOKEN
 AUTH="-H \"Authorization: Bearer $ACCESS_TOKEN\""
 
 # Verify access to Eureka and that all four microservices are registered in Eureka
 assertCurl 200 "curl -H "accept:application/json" -k https://u:p@$HOST:$PORT/eureka/api/apps -s"
-assertEqual 5 $(echo $RESPONSE | jq ".applications.application | length")
+assertEqual 6 $(echo $RESPONSE | jq ".applications.application | length")
 
 setupTestdata
 
@@ -227,7 +227,7 @@ assertEqual "\"Type mismatch.\"" "$(echo $RESPONSE | jq .message)"
 assertCurl 401 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
 
 # Verify that the reader - client with only read scope can call the read API but not delete API.
-READER_ACCESS_TOKEN=$(curl -k https://reader:reader-secret@$HOST:$PORT/oauth2/token -d grant_type=client_credentials -s | jq .access_token -r)
+READER_ACCESS_TOKEN=$(curl -k https://reader:reader-secret@$HOST:$PORT/oauth2/token -d grant_type=client_credentials -d scope="product:read" -s | jq .access_token -r)
 echo READER_ACCESS_TOKEN=$READER_ACCESS_TOKEN
 READER_AUTH="-H \"Authorization: Bearer $READER_ACCESS_TOKEN\""
 
@@ -238,7 +238,7 @@ assertCurl 403 "curl -X DELETE $READER_AUTH -k https://$HOST:$PORT/product-compo
 echo "Swagger/OpenAPI tests"
 assertCurl 302 "curl -ks  https://$HOST:$PORT/openapi/swagger-ui.html"
 assertCurl 200 "curl -ksL https://$HOST:$PORT/openapi/swagger-ui.html"
-assertCurl 200 "curl -ks  https://$HOST:$PORT/openapi/webjars/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config"
+assertCurl 200 "curl -ks  https://$HOST:$PORT/openapi/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config"
 assertCurl 200 "curl -ks  https://$HOST:$PORT/openapi/v3/api-docs"
 assertEqual "3.1.0" "$(echo $RESPONSE | jq -r .openapi)"
 assertEqual "https://$HOST:$PORT" "$(echo $RESPONSE | jq -r .servers[].url)"

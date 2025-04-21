@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import se.magnus.springcloud.authorizationserver.jose.Jwks;
@@ -81,4 +82,10 @@ public class AuthorizationServerConfig {
         return ((jwkSelector, context) -> jwkSelector.select(jwkSet));
     }
 
+    @Bean
+    AuthorizationServerSettings authorizationServerSettings() {
+        return AuthorizationServerSettings.builder()
+            .issuer("http://auth-server:9999")
+            .build();
+    }
 }

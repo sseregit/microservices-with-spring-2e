@@ -2,6 +2,7 @@ package se.magnus.springcloud.gateway;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -9,6 +10,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Slf4j
 @EnableWebFluxSecurity
+@Configuration
 public class SecurityConfig {
 
     @Bean
@@ -17,16 +19,15 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeExchange(
                 authorizeExchangeSpec -> {
-                    authorizeExchangeSpec.pathMatchers("/headerrouting/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/actuator/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/eureka/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/oauth2/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/login/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/error/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/openapi/**").permitAll();
-                    authorizeExchangeSpec.pathMatchers("/webjars/**").
-                        permitAll();
-                    authorizeExchangeSpec.anyExchange().authenticated();
+                    authorizeExchangeSpec.pathMatchers("/headerrouting/**").permitAll()
+                        .pathMatchers("/actuator/**").permitAll()
+                        .pathMatchers("/eureka/**").permitAll()
+                        .pathMatchers("/oauth2/**").permitAll()
+                        .pathMatchers("/login/**").permitAll()
+                        .pathMatchers("/error/**").permitAll()
+                        .pathMatchers("/openapi/**").permitAll()
+                        .pathMatchers("/webjars/**").permitAll()
+                        .anyExchange().authenticated();
                 }
             )
             .oauth2ResourceServer(

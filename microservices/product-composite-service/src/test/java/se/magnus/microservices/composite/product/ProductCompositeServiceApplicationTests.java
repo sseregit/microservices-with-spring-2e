@@ -24,7 +24,8 @@ import se.magnus.api.exceptions.NotFoundException;
 import se.magnus.microservices.composite.product.services.ProductCompositeIntegration;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-    "eureka.client.enabled=false"},
+    "eureka.client.enabled=false",
+    "spring.main.allow-bean-definition-overriding=true"},
     classes = {TestSecurityConfig.class})
 class ProductCompositeServiceApplicationTests {
 
