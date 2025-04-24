@@ -35,3 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
+
+/auth0/env.bash

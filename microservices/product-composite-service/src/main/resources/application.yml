@@ -139,7 +139,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://${app.auth-server}:9999
+          issuer-uri: https://dev-dey0yfw2zf2xbs77.us.auth0.com/
 ---
 spring.config.activate.on-profile: docker
 

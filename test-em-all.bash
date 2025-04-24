@@ -181,7 +181,17 @@ fi
 
 waitForService curl -k https://$HOST:$PORT/actuator/health
 
-ACCESS_TOKEN=$(curl -k https://writer:writer-secret@$HOST:$PORT/oauth2/token -d grant_type=client_credentials -d scope="product:write product:read" -s| jq .access_token -r)
+export TENANT=dev-dey0yfw2zf2xbs77.us.auth0.com
+export WRITER_CLIENT_ID=SY3iYhCMh3P9mWniMMTs5L4uxExwn3Y0
+export WRITER_CLIENT_SECRET=TX6qChTxC4g1sCqVdAI6dYIxHLWFBcIkNH4VrTemalY5qWHsmIyJoIkZVeR9-jEn
+
+ACCESS_TOKEN=$(curl -X POST https://$TENANT/oauth/token \
+-d grant_type=client_credentials \
+-d audience=https://localhost:8443/product-composite \
+-d scope=product:write+product:read \
+-d client_id=$WRITER_CLIENT_ID \
+-d client_secret=$WRITER_CLIENT_SECRET -s | jq -r .access_token)
+
 echo ACCESS_TOKEN=$ACCESS_TOKEN
 AUTH="-H \"Authorization: Bearer $ACCESS_TOKEN\""
 
@@ -226,11 +236,20 @@ assertEqual "\"Type mismatch.\"" "$(echo $RESPONSE | jq .message)"
 # Verify that a request without access token fails on 401, Unauthorized
 assertCurl 401 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
 
-# Verify that the reader - client with only read scope can call the read API but not delete API.
-READER_ACCESS_TOKEN=$(curl -k https://reader:reader-secret@$HOST:$PORT/oauth2/token -d grant_type=client_credentials -d scope="product:read" -s | jq .access_token -r)
+export READER_CLIENT_ID=jm7aynTn6CpX0VNRqSSEBjFbuxNIBrIn
+export READER_CLIENT_SECRET=IccRe0dS6o6X16gMuXxAyk1MWlaa_LDF-j5XELjbs82NYwoKa6x475wHEK8-dYNp
+
+READER_ACCESS_TOKEN=$(curl -X POST https://$TENANT/oauth/token \
+-d grant_type=client_credentials \
+-d audience=https://localhost:8443/product-composite \
+-d scope=product:read \
+-d client_id=$READER_CLIENT_ID \
+-d client_secret=$READER_CLIENT_SECRET -s | jq -r .access_token)
+
 echo READER_ACCESS_TOKEN=$READER_ACCESS_TOKEN
 READER_AUTH="-H \"Authorization: Bearer $READER_ACCESS_TOKEN\""
 
+# Verify that the reader - client with only read scope can call the read API but not delete API.
 assertCurl 200 "curl $READER_AUTH -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
 assertCurl 403 "curl -X DELETE $READER_AUTH -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
 

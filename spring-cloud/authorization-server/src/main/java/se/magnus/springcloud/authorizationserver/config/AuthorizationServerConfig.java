@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -19,6 +22,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import se.magnus.springcloud.authorizationserver.jose.Jwks;
 
 @Configuration(proxyBeanMethods = false)
@@ -85,7 +89,16 @@ public class AuthorizationServerConfig {
     @Bean
     AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
-            .issuer("http://auth-server:9999")
+            .issuer("https://dev-dey0yfw2zf2xbs77.us.auth0.com")
             .build();
+    }
+
+    @Bean
+    UserDetailsService userDetailsService() {
+        UserDetails user = User.withUsername("u")
+            .password("{noop}" + "p")
+            .authorities("USER")
+            .build();
+        return new InMemoryUserDetailsManager(user);
     }
 }

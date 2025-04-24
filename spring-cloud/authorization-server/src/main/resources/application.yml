@@ -1,7 +1,7 @@
 spring:
   authorization-server:
-    issuer: http://auth-server:9999
-    
+    issuer: dev-dey0yfw2zf2xbs77.us.auth0.com/
+
 server.port: 9999
 server.forward-headers-strategy: framework
 
