@@ -25,7 +25,8 @@ import se.magnus.microservices.composite.product.services.ProductCompositeIntegr
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
     "eureka.client.enabled=false",
-    "spring.main.allow-bean-definition-overriding=true"},
+    "spring.main.allow-bean-definition-overriding=true",
+    "spring.cloud.config.enabled=false"},
     classes = {TestSecurityConfig.class})
 class ProductCompositeServiceApplicationTests {
 
