@@ -1,6 +1,4 @@
 spring:
-  config:
-    import: "configserver:"
   application:
     name: eureka-server
   cloud:
@@ -20,6 +18,7 @@ spring:
   config:
     activate:
       on-profile: docker
+    import: "configserver:"
   cloud:
     config:
       uri: http://config-server:8888

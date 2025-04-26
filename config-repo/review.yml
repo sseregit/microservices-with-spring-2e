@@ -9,7 +9,7 @@ spring.jpa.hibernate.ddl-auto: update
 spring.datasource:
   url: jdbc:mysql://localhost/review-db
   username: user
-  password: pwd
+  password: '{cipher}94912e74719a3172b91169260fc54e5dc2c703be02eefd68c252e289e8a2057d'
 
 spring.datasource.hikari.initializationFailTimeout: 60000
 
@@ -42,6 +42,8 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 ---
+spring.config.activate.on-profile: docker
+
 server.port: 8080
 
 spring.datasource.url: jdbc:mysql://mysql/review-db

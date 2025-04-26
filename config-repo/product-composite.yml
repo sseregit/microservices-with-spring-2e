@@ -10,7 +10,7 @@ springdoc:
     oauth2-redirect-url: https://localhost:8443/webjars/swagger-ui/oauth2-redirect.html
     oauth:
       client-id: writer
-      client-secret: writer-secret
+      client-secret: '{cipher}5a176021e775c34b06a5be132cda95129f1f0beb4ddf4dd1d86d4e7ad1c70f80'
       use-basic-authentication-with-access-code-grant: true
   oAuthFlow:
     authorizationUrl: https://localhost:8443/oauth2/authorize
@@ -112,8 +112,9 @@ spring:
         jwt:
           issuer-uri: https://dev-dey0yfw2zf2xbs77.us.auth0.com/
 ---
-server.port: 8080
+spring.config.activate.on-profile: docker
 
+server.port: 8080
 ---
 spring.config.activate.on-profile: streaming_partitioned
 

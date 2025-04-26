@@ -214,10 +214,6 @@ services:
         condition: service_healthy
 
   auth-server:
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     build:
       context: spring-cloud/authorization-server
       tags:
@@ -228,6 +224,10 @@ services:
       interval: 5s
       timeout: 2s
       retries: 60
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
+      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
 
   config-server:
     build:
