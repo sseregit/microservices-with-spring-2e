@@ -42,7 +42,7 @@ class ProductCompositeServiceApplicationTests {
 
     @BeforeEach
     void setUp() {
-        when(compositeIntegration.getProduct(PRODUCT_ID_OK)).thenReturn(
+        when(compositeIntegration.getProduct(PRODUCT_ID_OK, 0, 0)).thenReturn(
             Mono.just(new Product(PRODUCT_ID_OK, "name", 1, "mock-address")));
         when(compositeIntegration.getRecommendations(PRODUCT_ID_OK)).thenReturn(
             Flux.fromIterable(List.of(
@@ -50,9 +50,9 @@ class ProductCompositeServiceApplicationTests {
         when(compositeIntegration.getReviews(PRODUCT_ID_OK)).thenReturn(
             Flux.fromIterable(List.of(
                 new Review(PRODUCT_ID_OK, 1, "author", "subject", "content", "mock address"))));
-        when(compositeIntegration.getProduct(PRODUCT_ID_NOT_FOUND)).thenThrow(
+        when(compositeIntegration.getProduct(PRODUCT_ID_NOT_FOUND, 0, 0)).thenThrow(
             new NotFoundException("NOT FOUND: " + PRODUCT_ID_NOT_FOUND));
-        when(compositeIntegration.getProduct(PRODUCT_ID_INVALID)).thenThrow(
+        when(compositeIntegration.getProduct(PRODUCT_ID_INVALID, 0, 0)).thenThrow(
             new InvalidInputException("INVALID: " + PRODUCT_ID_INVALID));
     }
 

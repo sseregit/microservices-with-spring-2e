@@ -105,6 +105,53 @@ logging:
 server:
   forward-headers-strategy: framework
 
+resilience4j:
+  timelimiter:
+    instances:
+      product:
+        # 인스턴스가 시간 초과 예외를 던지지 않고 호출이 완료될 떄까지 기다리는 시간
+        timeout-duration: 2s
+  circuitbreaker:
+    instances:
+      product:
+        # Resilience4j가 상태 점검 엔드포인트의 상태에 영향을 미치지 않게 한다.
+        # 컴포넌트가 의존하는 컴포넌트 중 하나가 비정상이더라도 해당 컴포넌트를 정상으로 간주한다.
+        allow-health-indicator-to-fail: false
+        # Resilience4j가 서킷 브레이커의 상태에 관한 정보로 상태 점검 엔드포인트를 채우게 한다.
+        register-health-indicator: true
+        # 슬라이딩 윈도우를 사용해 가장 최근 이벤트를 계산해 서킷 브레이커를 열어야 할지 결정한다.
+        sliding-window-type: COUNT_BASED
+        # 닫힌 상태에서의 호출 수, 서킷을 열어야 할지 결정할 때 사용한다.
+        sliding-window-size: 5
+        # 실패한 호출에 대한 임곗값(백분율)으로 이값을 초과하면 서킷이 열린다.
+        failure-rate-threshold: 50
+        # 반열림 상태로 전환하기 전에 서킷을 열린 상태로 유지하는 시간
+        wait-duration-in-open-state: 10000
+        # 반열림 상태에서의 호출 수, 서킷을 다시 열거나 닫힘 상태로 돌아갈지 결정할 때 사용
+        permitted-number-of-calls-in-half-open-state: 3
+        # 대기 시간이 끝나면 자동으로 서킷 브레이커를 반개방 상태로 전환할지 결정한다.
+        # false는 대기 시간이 끝난 후 첫 번째 호출을 기다렸다가 반개방 상태로 전환한다.
+        automatic-transition-from-open-to-half-open-enabled: true
+        # 오류로 간주하지 않을 예외를 지정한다.
+        ignore-exceptions:
+          - se.magnus.api.exceptions.InvalidInputException
+          - se.magnus.api.exceptions.NotFoundException
+  retry:
+    instances:
+      product:
+        # 첫 번째 호출을 포함한 총 시도 횟수
+        max-attempts: 3
+        # 재시도를 다시 수행하기 전의 대기 시간
+        wait-duration: 1000
+        # 재시도를 트리거하는 예외목록
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException$InternalServerError
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+
 spring:
   security:
     oauth2:

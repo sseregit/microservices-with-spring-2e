@@ -23,11 +23,13 @@ repositories {
 
 ext {
     springCloudVersion = "2024.0.1"
+    resilience4jVersion = "2.3.0"
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "io.github.resilience4j:resilience4j-bom:${resilience4jVersion}"
     }
 }
 
@@ -59,6 +61,10 @@ dependencies {
     testImplementation 'org.springframework.cloud:spring-cloud-stream-test-binder'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    implementation "io.github.resilience4j:resilience4j-spring-boot3:${resilience4jVersion}"
+    implementation "io.github.resilience4j:resilience4j-reactor:${resilience4jVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 

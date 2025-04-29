@@ -8,7 +8,12 @@ import static se.magnus.api.event.Event.Type.CREATE;
 import static se.magnus.api.event.Event.Type.DELETE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import java.io.IOException;
+import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +26,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
@@ -34,6 +40,7 @@ import se.magnus.api.event.Event;
 import se.magnus.api.exceptions.InvalidInputException;
 import se.magnus.api.exceptions.NotFoundException;
 import se.magnus.util.http.HttpErrorInfo;
+import se.magnus.util.http.ServiceUtil;
 
 @Component
 @Slf4j
@@ -48,6 +55,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
     private final StreamBridge streamBridge;
 
     private final Scheduler publishEventScheduler;
+    private final ServiceUtil serviceUtil;
 
     @Autowired
     public ProductCompositeIntegration(
@@ -55,24 +63,45 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 
         WebClient.Builder webClient,
         ObjectMapper mapper,
-        StreamBridge streamBridge
-    ) {
+        StreamBridge streamBridge,
+        ServiceUtil serviceUtil) {
 
         this.publishEventScheduler = publishEventScheduler;
         this.webClient = webClient.build();
         this.mapper = mapper;
         this.streamBridge = streamBridge;
+        this.serviceUtil = serviceUtil;
     }
 
+    @Retry(name = "product")
+    @TimeLimiter(name = "product")
+    @CircuitBreaker(name = "product", fallbackMethod = "getProductFallbackValue")
     @Override
-    public Mono<Product> getProduct(int productId) {
-        String url = PRODUCT_SERVICE_URL + "/product/" + productId;
+    public Mono<Product> getProduct(int productId, int delay, int faultPercent) {
+        URI url = UriComponentsBuilder.fromUriString(
+                PRODUCT_SERVICE_URL + "/product/{productId}?delay={delay}&faultPercent={faultPercent}")
+            .build(productId, delay, faultPercent);
         log.debug("Will call the getProduct API on URL: {}", url);
 
         return webClient.get().uri(url).retrieve().bodyToMono(Product.class)
             .log(log.getName(), FINE)
             .onErrorMap(WebClientException.class, ex -> handleException(ex));
     }
+
+    public Mono<Product> getProductFallbackValue(int productId, int delay, int faultPercent,
+        CallNotPermittedException ex) {
+
+        if (productId == 13) {
+            String errMsg = """ 
+                Product Id: %s not found in fallback cache!
+                """.formatted(productId);
+            throw new NotFoundException(errMsg);
+        }
+
+        return Mono.just(new Product(productId, "Fallback product" + productId, productId,
+            serviceUtil.getServiceAddress()));
+    }
+
 
     private Throwable handleException(Throwable ex) {
 
