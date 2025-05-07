@@ -10,6 +10,13 @@ spring.data.mongodb:
 
 spring.cloud.function.definition: messageProcessor
 
+spring:
+  cloud:
+    stream:
+      kafka:
+        binder:
+          enable-observation: true
+
 spring.cloud.stream:
   default.contentType: application/json
   bindings.messageProcessor-in-0:

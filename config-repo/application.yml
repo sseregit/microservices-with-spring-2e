@@ -20,6 +20,7 @@ spring.rabbitmq:
   username: guest
   password: '{cipher}72a4abd9633d70bb370c5b511471e5e366a8c1022328439075e66b7d768c3ff2'
 
+
 spring.cloud.stream.kafka.binder:
   brokers: 127.0.0.1
   defaultBrokerPort: 9092
@@ -30,8 +31,23 @@ spring.cloud.stream.defaultBinder: rabbit
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
 
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: b3_multi
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
+
 ---
 spring.config.activate.on-profile: docker
+
+management:
+  zipkin:
+    tracing:
+      endpoint: "http://zipkin:9411/api/v2/spans"
 
 spring.rabbitmq.host: rabbitmq
 

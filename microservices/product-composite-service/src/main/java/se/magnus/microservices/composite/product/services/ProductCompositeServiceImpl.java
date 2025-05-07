@@ -2,6 +2,8 @@ package se.magnus.microservices.composite.product.services;
 
 import static java.util.logging.Level.FINE;
 
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +33,14 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
 
     private final ServiceUtil serviceUtil;
     private final ProductCompositeIntegration integration;
+    private final Tracer tracer;
 
     public ProductCompositeServiceImpl(ServiceUtil serviceUtil,
-        ProductCompositeIntegration integration) {
+        ProductCompositeIntegration integration,
+        Tracer tracer) {
         this.serviceUtil = serviceUtil;
         this.integration = integration;
+        this.tracer = tracer;
     }
 
     @Override
@@ -54,7 +59,14 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
                 integration.getReviews(productId).collectList())
 
             .doOnError(ex ->
-                log.warn("getCompositeProduct failed: {}", ex.toString()))
+            {
+                Span span = tracer.currentSpan();
+                if (span != null) {
+                    span.error(ex);
+                    span.tag("error", ex.getMessage());
+                }
+                log.warn("getCompositeProduct failed: {}", ex.toString());
+            })
             .log(log.getName(), FINE);
     }
 

@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.Health;
+import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancedExchangeFilterFunction;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -60,14 +61,16 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
     @Autowired
     public ProductCompositeIntegration(
         @Qualifier("publishEventScheduler") Scheduler publishEventScheduler,
-
         WebClient.Builder webClient,
+        LoadBalancedExchangeFilterFunction lbFunction,
         ObjectMapper mapper,
         StreamBridge streamBridge,
         ServiceUtil serviceUtil) {
 
         this.publishEventScheduler = publishEventScheduler;
-        this.webClient = webClient.build();
+        this.webClient = webClient
+            .filter(lbFunction)
+            .build();
         this.mapper = mapper;
         this.streamBridge = streamBridge;
         this.serviceUtil = serviceUtil;
@@ -104,7 +107,6 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 
 
     private Throwable handleException(Throwable ex) {
-
         if (!(ex instanceof WebClientResponseException wcre)) {
             log.warn("Got a unexpected error: {}, will rethrow it", ex.toString());
             return ex;
@@ -225,9 +227,12 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 
     private void sendMessage(String bindingName, Event event) {
         log.debug("Sending a {} message to {}", event.getEventType(), bindingName);
-        Message message = MessageBuilder.withPayload(event)
-            .setHeader("partitionKey", event.getKey())
-            .build();
+
+        MessageBuilder<Event> messageBuilder = MessageBuilder.withPayload(event)
+            .setHeader("partitionKey", event.getKey());
+
+        Message message = messageBuilder.build();
+
         streamBridge.send(bindingName, message);
     }
 

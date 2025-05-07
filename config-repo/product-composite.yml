@@ -81,21 +81,26 @@ server.error.include-message: always
 
 spring.application.name: product-composite
 
-spring.cloud.stream:
-  default.contentType: application/json
-  bindings:
-    products-out-0:
-      destination: products
-      producer:
-        required-groups: auditGroup
-    recommendations-out-0:
-      destination: recommendations
-      producer:
-        required-groups: auditGroup
-    reviews-out-0:
-      destination: reviews
-      producer:
-        required-groups: auditGroup
+spring.cloud:
+  stream:
+    default:
+      contentType: application/json
+    bindings:
+      products-out-0:
+        destination: products
+        producer:
+          required-groups: auditGroup
+      recommendations-out-0:
+        destination: recommendations
+        producer:
+          required-groups: auditGroup
+      reviews-out-0:
+        destination: reviews
+        producer:
+          required-groups: auditGroup
+    kafka:
+      binder:
+        enable-observation: true
 
 logging:
   level:
@@ -158,6 +163,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://dev-dey0yfw2zf2xbs77.us.auth0.com/
+
 ---
 spring.config.activate.on-profile: docker
 

@@ -8,6 +8,11 @@ spring:
     host: localhost
     port: 27017
     database: product-db
+  cloud:
+    stream:
+      kafka:
+        binder:
+          enable-observation: true
 
 spring.cloud.function.definition: messageProcessor
 

@@ -15,6 +15,13 @@ spring.datasource.hikari.initializationFailTimeout: 60000
 
 spring.cloud.function.definition: messageProcessor
 
+spring:
+  cloud:
+    stream:
+      kafka:
+        binder:
+          enable-observation: true
+
 spring.cloud.stream:
   default.contentType: application/json
   bindings.messageProcessor-in-0:
