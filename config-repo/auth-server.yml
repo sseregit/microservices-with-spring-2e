@@ -10,3 +10,8 @@ spring.application.name: auth-server
 logging:
   level:
     root: INFO
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 80

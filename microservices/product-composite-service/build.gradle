@@ -59,9 +59,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
     implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
     testImplementation 'org.springframework.cloud:spring-cloud-stream-test-binder'
-
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-
+    
     implementation "io.github.resilience4j:resilience4j-spring-boot3:${resilience4jVersion}"
     implementation "io.github.resilience4j:resilience4j-reactor:${resilience4jVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-aop'
