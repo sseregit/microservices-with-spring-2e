@@ -1,0 +1,20 @@
+fullnameOverride: mysql
+
+image:
+  repository: registry.hub.docker.com/library
+  name: mysql
+  tag: 8.0.41
+  pullPolicy: IfNotPresent
+
+ports:
+  - containerPort: 3306
+
+resources:
+  requests:
+    memory: 512Mi
+  limits:
+    memory: 1024Mi
+
+service:
+  ports:
+    - port: 3306

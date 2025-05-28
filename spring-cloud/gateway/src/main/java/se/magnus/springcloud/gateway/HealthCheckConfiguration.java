@@ -9,7 +9,6 @@ import org.springframework.boot.actuate.health.CompositeReactiveHealthContributo
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.ReactiveHealthContributor;
 import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
-import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancedExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -21,10 +20,8 @@ public class HealthCheckConfiguration {
 
     private final WebClient webClient;
 
-    public HealthCheckConfiguration(WebClient.Builder webClientBuilder,
-        LoadBalancedExchangeFilterFunction lbFunction) {
+    public HealthCheckConfiguration(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder
-            .filter(lbFunction)
             .build();
     }
 

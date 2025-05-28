@@ -3,6 +3,8 @@ server.error.include-message: always
 
 spring.application.name: product
 
+management.endpoint.health.group.readiness.include: rabbit, mongo
+
 spring:
   data.mongodb:
     host: localhost

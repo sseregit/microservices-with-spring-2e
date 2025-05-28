@@ -9,7 +9,7 @@ ports:
     protocol: TCP
 
 env:
-  SPRING_PROFILES_ACTIVE: "docker, native"
+  SPRING_PROFILES_ACTIVE: "docker,native"
 
 livenessProbe_enabled: true
 livenessProbe:

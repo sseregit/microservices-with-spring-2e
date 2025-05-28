@@ -1,10 +1,7 @@
 services:
   product:
-    build:
-      context: microservices/product-service
-      tags:
-        - product:dev
-    image: product:dev
+    build: microservices/product-service
+    image: hands-on/product-service
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0
@@ -16,11 +13,8 @@ services:
       rabbitmq:
         condition: service_healthy
   product-p1:
-    build:
-      context: microservices/product-service
-      tags:
-        - product:dev
-    image: product:dev
+    build: microservices/product-service
+    image: hands-on/product-service
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1
@@ -33,11 +27,8 @@ services:
         condition: service_healthy
 
   recommendation:
-    build:
-      context: microservices/recommendation-service
-      tags:
-        - recommendation:dev
-    image: recommendation:dev
+    build: microservices/recommendation-service
+    image: hands-on/recommendation-service
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0
@@ -50,11 +41,8 @@ services:
         condition: service_healthy
 
   recommendation-p1:
-    build:
-      context: microservices/recommendation-service
-      tags:
-        - recommendation:dev
-    image: recommendation:dev
+    build: microservices/recommendation-service
+    image: hands-on/recommendation-service
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1
@@ -67,11 +55,8 @@ services:
         condition: service_healthy
 
   review:
-    build:
-      context: microservices/review-service
-      tags:
-        - review:dev
-    image: review:dev
+    build: microservices/review-service
+    image: hands-on/review-service
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0
@@ -84,11 +69,8 @@ services:
         condition: service_healthy
 
   review-p1:
-    build:
-      context: microservices/review-service
-      tags:
-        - review:dev
-    image: review:dev
+    build: microservices/review-service
+    image: hands-on/review-service
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_1
@@ -101,11 +83,8 @@ services:
         condition: service_healthy
 
   product-composite:
-    build:
-      context: microservices/product-composite-service
-      tags:
-        - product-composite:dev
-    image: product-composite:dev
+    build: microservices/product-composite-service
+    image: hands-on/product-composite-service
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker, streaming_partitioned
@@ -157,29 +136,14 @@ services:
       timeout: 2s
       retries: 60
 
-  eureka:
-    build:
-      context: spring-cloud/eureka-server
-      tags:
-        - eureka-server:dev
-    image: eureka-server:dev
-    mem_limit: 512m
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
-
   gateway:
+    build: spring-cloud/gateway
+    image: hands-on/gateway
+    mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
-    build:
-      context: spring-cloud/gateway
-      tags:
-        - gateway:dev
-    image: gateway:dev
-    mem_limit: 512m
     ports:
       - "8443:8443"
     depends_on:
@@ -187,10 +151,8 @@ services:
         condition: service_healthy
 
   auth-server:
-    build:
-      context: spring-cloud/authorization-server
-      tags:
-        - auth-server:dev
+    build: spring-cloud/authorization-server
+    image: hands-on/auth-server
     mem_limit: 512m
     healthcheck:
       test: [ "CMD", "curl", "-fs", "http://localhost:9999/actuator/health" ]
@@ -203,16 +165,14 @@ services:
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
 
   config-server:
-    build:
-      context: spring-cloud/config-server
-      tags:
-        - config-server:dev
+    build: spring-cloud/config-server
+    image: hands-on/config-server
+    mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker,native
       - ENCRYPT_KEY=${CONFIG_SERVER_ENCRYPT_KEY}
       - SPRING_SECURITY_USER_NAME=${CONFIG_SERVER_USR}
       - SPRING_SECURITY_USER_PASSWORD=${CONFIG_SERVER_PWD}
-    mem_limit: 512m
     volumes:
       - $PWD/config-repo:/config-repo
 

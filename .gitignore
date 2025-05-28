@@ -39,3 +39,4 @@ out/
 /auth0/env.bash
 
 .env
+/kubernetes/helm/**/*.lock

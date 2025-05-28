@@ -8,6 +8,8 @@ spring.data.mongodb:
   port: 27017
   database: recommendation-db
 
+management.endpoint.health.group.readiness.include: rabbit, mongo
+
 spring.cloud.function.definition: messageProcessor
 
 spring:

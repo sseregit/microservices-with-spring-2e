@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.Health;
-import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancedExchangeFilterFunction;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -62,14 +61,12 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
     public ProductCompositeIntegration(
         @Qualifier("publishEventScheduler") Scheduler publishEventScheduler,
         WebClient.Builder webClient,
-        LoadBalancedExchangeFilterFunction lbFunction,
         ObjectMapper mapper,
         StreamBridge streamBridge,
         ServiceUtil serviceUtil) {
 
         this.publishEventScheduler = publishEventScheduler;
         this.webClient = webClient
-            .filter(lbFunction)
             .build();
         this.mapper = mapper;
         this.streamBridge = streamBridge;
