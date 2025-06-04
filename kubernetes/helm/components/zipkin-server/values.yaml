@@ -8,7 +8,7 @@ image:
 
 env:
   STORAGE_TYPE: mem
-  ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+  ZIPKIN_TRACING_ENDPOINT: http://zipkin-server:9411/api/v2/spans
 
 ports:
   - containerPort: 9411
@@ -37,3 +37,10 @@ readinessProbe:
   failureThreshold: 3
   successThreshold: 1
 
+resources:
+  limits:
+    memory: 512Mi
+
+service:
+  ports:
+    - port: 9411

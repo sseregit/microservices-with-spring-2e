@@ -3,7 +3,7 @@ fullnameOverride: gateway
 image:
   name: gateway
 
-prots:
+ports:
   - containerPort: 8443
 
 env:
