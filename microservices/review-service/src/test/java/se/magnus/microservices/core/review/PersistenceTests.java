@@ -18,7 +18,7 @@ import se.magnus.microservices.core.review.persistence.ReviewEntity;
 import se.magnus.microservices.core.review.persistence.ReviewRepository;
 
 @Slf4j
-@DataJpaTest(properties = {"spring.cloud.config.enabled=false"})
+@DataJpaTest(properties = {})
 @Transactional(propagation = NOT_SUPPORTED)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class PersistenceTests extends MySqlTestBase {
